@@ -65,8 +65,8 @@ const PRODUCT = {
  * after its product). `square` frames every shot the same way without
  * distorting it: the short side is extended with the photo's own edge pixels.
  * The Motorola picture is a reseller's ad: the crop keeps the charger and the
- * cable and leaves out the "ENVIO IMEDIATO" badge and the ad copy, a shipping
- * promise the store never made.
+ * cable and leaves out the "ENVIO IMEDIATO" badge (a shipping promise the store
+ * never made) and the ad copy, down to the blue underline below it.
  */
 const PRODUCT_SPECS = [
   { id: 'product-jbl-tune-520bt', file: 'produtos/Fone de Ouvido JBL Tune 520BT.jpeg' },
@@ -75,7 +75,7 @@ const PRODUCT_SPECS = [
   {
     id: 'product-carregador-motorola-68w',
     file: 'produtos/Carregador Motorola TurboPower 68W.jpeg',
-    extract: { left: 0, top: 489, width: 596, height: 596 },
+    extract: { left: 0, top: 493, width: 592, height: 592 },
   },
   { id: 'product-cabo-kaidi-kd306', file: 'produtos/Cabo USB Kaidi KD-306 – 1 Metro.jpeg' },
   { id: 'product-cabo-kaidi-tipo-c', file: 'produtos/Cabo USB Kaidi Tipo-C – 1 Metro.jpeg' },
