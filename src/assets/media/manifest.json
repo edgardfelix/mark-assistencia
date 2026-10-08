@@ -1,0 +1,234 @@
+{
+  "images": {
+    "bench-detail": {
+      "width": 480,
+      "height": 768,
+      "widths": [
+        480
+      ],
+      "color": "#c8a898"
+    },
+    "bench-iphone": {
+      "width": 1046,
+      "height": 1600,
+      "widths": [
+        480,
+        800,
+        1046
+      ],
+      "color": "#585858"
+    },
+    "bench-precision": {
+      "width": 480,
+      "height": 768,
+      "widths": [
+        480
+      ],
+      "color": "#c8a898"
+    },
+    "certificate": {
+      "width": 940,
+      "height": 372,
+      "widths": [
+        480,
+        940
+      ],
+      "color": "#d8e8f8"
+    },
+    "device-internals": {
+      "width": 480,
+      "height": 768,
+      "widths": [
+        480
+      ],
+      "color": "#685868"
+    },
+    "feedback-1": {
+      "width": 585,
+      "height": 783,
+      "widths": [
+        360,
+        585
+      ],
+      "color": "#080808"
+    },
+    "feedback-2": {
+      "width": 512,
+      "height": 694,
+      "widths": [
+        360,
+        512
+      ],
+      "color": "#080818"
+    },
+    "feedback-3": {
+      "width": 720,
+      "height": 1171,
+      "widths": [
+        360,
+        720
+      ],
+      "color": "#080808"
+    },
+    "feedback-4": {
+      "width": 572,
+      "height": 676,
+      "widths": [
+        360,
+        572
+      ],
+      "color": "#182828"
+    },
+    "feedback-5": {
+      "width": 639,
+      "height": 1167,
+      "widths": [
+        360,
+        639
+      ],
+      "color": "#282828"
+    },
+    "feedback-6": {
+      "width": 720,
+      "height": 578,
+      "widths": [
+        360,
+        720
+      ],
+      "color": "#282828"
+    },
+    "feedback-7": {
+      "width": 598,
+      "height": 1040,
+      "widths": [
+        360,
+        598
+      ],
+      "color": "#080808"
+    },
+    "glass-removal": {
+      "width": 480,
+      "height": 768,
+      "widths": [
+        480
+      ],
+      "color": "#180808"
+    },
+    "hero-poster": {
+      "width": 480,
+      "height": 768,
+      "widths": [
+        480
+      ],
+      "color": "#482828"
+    },
+    "product-cabo-kaidi-kd306": {
+      "width": 1032,
+      "height": 1032,
+      "widths": [
+        360,
+        640,
+        1032
+      ],
+      "color": "#f8f8f8"
+    },
+    "product-cabo-kaidi-tipo-c": {
+      "width": 1036,
+      "height": 1036,
+      "widths": [
+        360,
+        640,
+        1036
+      ],
+      "color": "#f8f8f8"
+    },
+    "product-cabo-samsung": {
+      "width": 951,
+      "height": 951,
+      "widths": [
+        360,
+        640,
+        951
+      ],
+      "color": "#f8f8f8"
+    },
+    "product-cabo-xiaomi-6a": {
+      "width": 1120,
+      "height": 1120,
+      "widths": [
+        360,
+        640,
+        1120
+      ],
+      "color": "#f8f8f8"
+    },
+    "product-carregador-motorola-68w": {
+      "width": 596,
+      "height": 596,
+      "widths": [
+        360,
+        596
+      ],
+      "color": "#e8e8e8"
+    },
+    "product-jbl-tune-520bt": {
+      "width": 1101,
+      "height": 1101,
+      "widths": [
+        360,
+        640,
+        1101
+      ],
+      "color": "#e8e8e8"
+    },
+    "repair-iphone-15-pro-max": {
+      "width": 924,
+      "height": 1196,
+      "widths": [
+        480,
+        924
+      ],
+      "color": "#a88868"
+    },
+    "screen-cracked": {
+      "width": 978,
+      "height": 1363,
+      "widths": [
+        480,
+        978
+      ],
+      "color": "#d8e8f8"
+    },
+    "store-interior": {
+      "width": 1283,
+      "height": 1533,
+      "widths": [
+        480,
+        800,
+        1283
+      ],
+      "color": "#080808"
+    }
+  },
+  "brand": {
+    "logo-lockup": {
+      "width": 1168,
+      "height": 380
+    },
+    "logo-sign": {
+      "width": 1261,
+      "height": 577
+    },
+    "logo-symbol": {
+      "width": 403,
+      "height": 379
+    }
+  },
+  "video": {
+    "hero-loop": {
+      "width": 480,
+      "height": 768,
+      "duration": 14.44
+    }
+  }
+}

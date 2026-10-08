@@ -1,0 +1,8 @@
+# Netlify: security headers come from the generated dist/client/_headers
+# (single source of truth: config/security-headers.ts).
+[build]
+  command = "npm run build"
+  publish = "dist/client"
+
+[build.environment]
+  NODE_VERSION = "22"
