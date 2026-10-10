@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { pageSeo } from '@/config/seo';
-import { normalizeSiteUrl } from '@/config/site';
+import { normalizeSiteUrl, officialSiteUrl } from '@/config/site';
 import { prerenderPaths } from '@/routes/routes';
 import { buildHeadTags, serializeHeadTags } from './head';
 import { localBusinessJsonLd, pageJsonLd, serializeJsonLd } from './structured-data';
@@ -37,6 +37,21 @@ describe('site URL', () => {
     expect(normalizeSiteUrl('http://www.exemplo.com.br')).toBe('');
     expect(normalizeSiteUrl('javascript:alert(1)')).toBe('');
     expect(normalizeSiteUrl(undefined)).toBe('');
+  });
+
+  it('uses the official domain unless VITE_SITE_URL points a copy elsewhere', async () => {
+    expect(normalizeSiteUrl(officialSiteUrl)).toBe(officialSiteUrl);
+    try {
+      vi.stubEnv('VITE_SITE_URL', '');
+      vi.resetModules();
+      expect((await import('@/config/site')).siteUrl).toBe(officialSiteUrl);
+      vi.stubEnv('VITE_SITE_URL', 'https://copia.exemplo.com.br/');
+      vi.resetModules();
+      expect((await import('@/config/site')).siteUrl).toBe('https://copia.exemplo.com.br');
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
   });
 });
 

@@ -54,6 +54,7 @@ src/
 | ------------------------------------------------------- | ------------------------ |
 | Telefone, endereço, horário, CNPJ, Instagram, destaques | `src/config/business.ts` |
 | Títulos e descrições (SEO) de cada página               | `src/config/seo.ts`      |
+| Domínio oficial (canonical, Open Graph, sitemap)        | `src/config/site.ts`     |
 | Textos das páginas, botões e mensagens do WhatsApp      | `src/content/*.ts`       |
 | Serviços                                                | `src/data/services.ts`   |
 | Preços (valores de referência e mensagens do WhatsApp)  | `src/data/pricing.ts`    |
@@ -97,9 +98,9 @@ legenda cortada do final), sem áudio, em WebM (VP9) e MP4 (H.264). Essa etapa p
 
 ## Variáveis de ambiente
 
-| Variável        | Uso                                                                                                                                                                                                                                                                                          |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_SITE_URL` | Domínio de produção (ex.: `https://www.seudominio.com.br`). Gera canonical, `og:url`, `og:image`, `sitemap.xml` e dados estruturados com URL. Na Vercel e na Netlify, se não for definida, é usada a URL de produção da plataforma. Sem nenhuma, essas tags são omitidas (nada é inventado). |
+| Variável        | Uso                                                                                                                                                                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VITE_SITE_URL` | Opcional. Substitui o domínio oficial (`https://www.markassistencia.com.br`, em `src/config/site.ts`) em canonical, `og:url`, `og:image`, `sitemap.xml` e dados estruturados. Use só para gerar uma cópia do site em outro endereço. |
 
 Não há segredos no projeto. Toda variável `VITE_*` é pública por definição.
 
@@ -110,6 +111,12 @@ Não há segredos no projeto. Toda variável `VITE_*` é pública por definiçã
 - **Cloudflare Pages:** comando `npm run build`, saída `dist/client`; usa o mesmo `_headers`.
 
 Em todos, rotas inexistentes recebem `404.html` com status 404.
+
+### Domínio
+
+O endereço oficial é `https://www.markassistencia.com.br`. No projeto da Vercel, `markassistencia.com.br` redireciona
+(308) para o `www`. O DNS fica no Registro.br: registros `A` na raiz e `CNAME` em `www`, com os valores mostrados pela
+Vercel em Settings → Domains.
 
 ### Segurança
 

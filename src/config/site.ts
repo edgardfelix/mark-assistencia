@@ -1,10 +1,9 @@
 /**
  * Public site configuration.
  *
- * `siteUrl` is resolved at build time (see vite.config.ts): VITE_SITE_URL, or the
- * hosting platform's production URL. When it is unknown, tags that require an
- * absolute URL (canonical, og:url, og:image, sitemap) are omitted instead of
- * being filled with a guessed domain.
+ * `siteUrl` is the origin of every absolute URL (canonical, og:url, og:image,
+ * sitemap, structured data): the official domain, unless VITE_SITE_URL is set
+ * to build a copy that lives at another address.
  */
 export function normalizeSiteUrl(value: string | undefined): string {
   if (!value) return '';
@@ -17,7 +16,13 @@ export function normalizeSiteUrl(value: string | undefined): string {
   }
 }
 
-export const siteUrl = normalizeSiteUrl(import.meta.env.VITE_SITE_URL);
+/**
+ * Official domain, registered at Registro.br. www is the primary host: the bare
+ * domain redirects to it (set up in the Vercel project, not in the code).
+ */
+export const officialSiteUrl = 'https://www.markassistencia.com.br';
+
+export const siteUrl = normalizeSiteUrl(import.meta.env.VITE_SITE_URL) || officialSiteUrl;
 
 export const site = {
   name: 'MARK ASSISTÊNCIA',

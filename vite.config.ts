@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';
 import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { securityHeaders, toHeadersFile } from './config/security-headers.ts';
 
 /**
@@ -73,21 +73,8 @@ function previewNotFound(): Plugin {
   };
 }
 
-/**
- * The public origin is needed for canonical/OG/sitemap URLs. An explicit
- * VITE_SITE_URL (env or .env file) wins; otherwise the host's production URL is
- * used when building on Vercel or Netlify. Nothing is guessed.
- */
-function resolveSiteUrl(mode: string): void {
-  if (loadEnv(mode, process.cwd(), 'VITE_').VITE_SITE_URL) return;
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  const fallback = vercel ? `https://${vercel}` : process.env.URL;
-  if (fallback) process.env.VITE_SITE_URL = fallback;
-}
-
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  resolveSiteUrl(mode);
   return {
     plugins: [
       react(),
