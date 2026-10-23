@@ -6,18 +6,24 @@
  *  - the build → `_headers` file (Netlify / Cloudflare Pages)
  *  - vercel.json (kept in sync by config/security-headers.test.ts)
  *
- * The site ships no inline scripts, no eval and no third-party code, so
- * `script-src 'self'` holds. `style-src 'unsafe-inline'` is required by the
- * CSS-in-JS runtime (styled-components) and server-rendered style attributes.
+ * The site ships no inline scripts and no eval. The only third-party code is
+ * Google Analytics 4 (gtag.js), loaded only when VITE_GA_ID is set; its hosts
+ * are the ones Google lists for Analytics without Ads features
+ * (https://developers.google.com/tag-platform/security/guides/csp).
+ * `style-src 'unsafe-inline'` is required by the CSS-in-JS runtime
+ * (styled-components) and server-rendered style attributes.
  */
+const googleTag = 'https://www.googletagmanager.com';
+const googleAnalytics = 'https://*.google-analytics.com';
+
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self'",
+  `script-src 'self' ${googleTag}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self'",
+  `img-src 'self' ${googleTag} ${googleAnalytics}`,
   "font-src 'self'",
   "media-src 'self'",
-  "connect-src 'self'",
+  `connect-src 'self' ${googleTag} ${googleAnalytics} https://*.google.com`,
   "manifest-src 'self'",
   "worker-src 'none'",
   "frame-src 'none'",

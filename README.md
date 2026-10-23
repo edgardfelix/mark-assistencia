@@ -7,7 +7,8 @@ Projeto desenvolvido pela E.F Solutions.
 - **Renderização:** todas as rotas são pré-renderizadas em HTML estático no build e hidratadas no navegador
   (SEO, prévias de link no WhatsApp/Instagram e LCP rápido, sem servidor).
 - **Bibliotecas:** Motion (animações), Lenis (rolagem suave da roda do mouse no desktop), lucide-react (ícones),
-  React Hook Form + Zod (formulário). Nenhum script de terceiros é carregado.
+  React Hook Form + Zod (formulário). O único script de terceiros é o Google Analytics 4, carregado só quando
+  `VITE_GA_ID` está definido.
 
 ## Como executar
 
@@ -40,7 +41,7 @@ src/
     motion/              primitivas de animação (Reveal, TextReveal, Magnetic, Parallax…)
     sections/            seções por página e seções compartilhadas
     ui/                  botões, tipografia, imagens responsivas, campos
-  config/                fatos verificados do negócio, SEO por página, URL do site
+  config/                fatos verificados do negócio, SEO e sitemap por página, URL do site, Google Analytics
   content/               TODO o texto do site (revisão de conformidade em um só lugar)
   data/                  serviços e avaliações (citações literais)
   hooks/ lib/ routes/ styles/ theme/
@@ -101,6 +102,7 @@ legenda cortada do final), sem áudio, em WebM (VP9) e MP4 (H.264). Essa etapa p
 | Variável        | Uso                                                                                                                                                                                                                                  |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `VITE_SITE_URL` | Opcional. Substitui o domínio oficial (`https://www.markassistencia.com.br`, em `src/config/site.ts`) em canonical, `og:url`, `og:image`, `sitemap.xml` e dados estruturados. Use só para gerar uma cópia do site em outro endereço. |
+| `VITE_GA_ID`    | Opcional. ID de medição do Google Analytics 4 (`G-XXXXXXXXXX`). Sem ele, nada é medido e nenhum script de terceiros é carregado. Veja [Google Search Console e Google Analytics](#google-search-console-e-google-analytics).         |
 
 Não há segredos no projeto. Toda variável `VITE_*` é pública por definição.
 
@@ -118,12 +120,46 @@ O endereço oficial é `https://www.markassistencia.com.br`. No projeto da Verce
 (308) para o `www`. O DNS fica no Registro.br: registros `A` na raiz e `CNAME` em `www`, com os valores mostrados pela
 Vercel em Settings → Domains.
 
+### Google Search Console e Google Analytics
+
+O build gera `robots.txt` (libera todo o site e aponta o sitemap) e `sitemap.xml` com as 9 páginas indexáveis. Cada
+página tem `<lastmod>` (data do build), `<changefreq>` e `<priority>`; os dois últimos ficam em `sitemap`, em
+`src/config/seo.ts`. O Google usa só o `<lastmod>`; os outros dois servem a outros buscadores. A página 404 fica fora
+do sitemap e tem `noindex`.
+
+**Search Console:** crie uma propriedade do tipo **Domínio** para `markassistencia.com.br`, que cobre o `www`, o
+domínio sem `www`, `http` e `https`. Valide com o registro `TXT` que o Google mostrar, criado na raiz do DNS no
+Registro.br (nome em branco, ao lado do `TXT` de SPF que já existe). Depois, em Sitemaps, envie
+`https://www.markassistencia.com.br/sitemap.xml`.
+
+**Google Analytics 4:** crie uma propriedade e um fluxo de dados da Web para `https://www.markassistencia.com.br` e
+copie o ID de medição (`G-XXXXXXXXXX`). Na Vercel, defina `VITE_GA_ID` em Settings → Environment Variables
+(Production) e publique de novo, porque a variável entra no build. O log do build mostra `Google Analytics on: G-…`
+ou `Google Analytics off`.
+
+- O `gtag.js` só carrega depois que a página termina de carregar e o navegador fica ocioso, para não disputar banda
+  e processamento com o carregamento inicial.
+- Visualizações de página: a da página de entrada é enviada com o endereço e o título lidos na abertura, e as
+  navegações feitas antes de o `gtag.js` rodar são contadas pelo próprio site. Depois disso, quem conta as
+  navegações sem recarregar é a medição otimizada do GA4: mantenha ligada no fluxo de dados a opção "Page changes
+  based on browser history events" (vem ligada por padrão). O título da página de destino é aplicado antes de o
+  endereço mudar, porque o GA4 lê o título nesse instante (testado com uma tag real do GA4).
+- Eventos enviados: `whatsapp_click`, `phone_click`, `email_click`, `instagram_click`, `directions_click`,
+  `contact_form_compose`, `pricing_select` e `product_view`, com os parâmetros `placement`, `provider`, `channel`,
+  `option` e `product`. Marque `whatsapp_click` e `phone_click` como eventos principais e registre os parâmetros
+  como dimensões personalizadas para vê-los nos relatórios.
+- Google Signals e personalização de anúncios ficam desligados no código.
+- Com `VITE_GA_ID` definido, a política de privacidade ganha uma seção sobre o Google Analytics e muda a data de
+  atualização (`src/content/legal.ts`). Sem a variável, ela continua dizendo que o site não usa cookies. Não há
+  banner de consentimento: decida com o cliente se ele quer um antes de ativar a medição.
+
 ### Segurança
 
-CSP sem scripts inline e sem `eval` (`script-src 'self'`), sem origens de terceiros, `frame-ancestors 'none'`,
-HSTS, `nosniff`, `Referrer-Policy`, `Permissions-Policy` e COOP. A fonte única é
-`config/security-headers.ts`; um teste falha se `vercel.json` sair de sincronia. O `npm run preview` aplica a
-mesma política, então violações aparecem localmente.
+CSP sem scripts inline e sem `eval`. As únicas origens de terceiros são as que o Google lista para o Google Analytics
+sem recursos de anúncios: `www.googletagmanager.com` (script, imagem e conexão), `*.google-analytics.com` (imagem e
+conexão) e `*.google.com` (conexão). Também `frame-ancestors 'none'`, HSTS, `nosniff`, `Referrer-Policy`,
+`Permissions-Policy` e COOP. A fonte única é `config/security-headers.ts`; um teste falha se `vercel.json` sair de
+sincronia. O `npm run preview` aplica a mesma política, então violações aparecem localmente.
 
 O formulário de contato não envia dados a nenhum servidor: ele valida, higieniza e abre a mensagem pronta
 no WhatsApp ou no e-mail do visitante. Se um dia houver um endpoint próprio, reutilize `src/lib/contact/schema.ts`

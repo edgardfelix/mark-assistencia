@@ -6,17 +6,21 @@ const csp = securityHeaders['Content-Security-Policy'] ?? '';
 const directive = (name: string) => csp.split('; ').find((d) => d.startsWith(`${name} `)) ?? '';
 
 describe('security headers', () => {
-  it('keeps scripts strict: own origin only, no inline code, no eval', () => {
-    expect(directive('script-src')).toBe("script-src 'self'");
+  it('keeps scripts strict: own origin and gtag.js only, no inline code, no eval', () => {
+    expect(directive('script-src')).toBe("script-src 'self' https://www.googletagmanager.com");
     expect(csp).not.toContain('unsafe-eval');
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).toContain("base-uri 'self'");
   });
 
-  it('does not allow data: or third-party origins', () => {
+  it('allows no data: URIs and no third-party origins beyond Google Analytics', () => {
     expect(csp).not.toContain('data:');
-    expect(csp).not.toMatch(/https?:\/\//);
+    expect(csp).not.toContain('http://');
+    expect(new Set(csp.match(/https:\/\/[^\s;]+/g))).toEqual(
+      new Set(['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.google.com']),
+    );
+    expect(directive('frame-src')).toBe("frame-src 'none'");
   });
 
   it('keeps vercel.json in sync with the single source of truth', () => {

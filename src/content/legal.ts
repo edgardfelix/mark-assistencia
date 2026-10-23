@@ -1,10 +1,12 @@
+import { gaMeasurementId } from '@/config/analytics';
 import { business } from '@/config/business';
 import { display } from '@/lib/format';
 
 /**
- * Legal texts. They describe only what this site actually does: no cookies,
- * no analytics, no ad pixels, no server-side storage of form data.
- * If any of that changes (analytics, a form endpoint), these texts must change too.
+ * Legal texts. They describe only what this site actually does: no ad pixels,
+ * no server-side storage of form data, and cookies and analytics only when
+ * VITE_GA_ID turns on Google Analytics, which the privacy policy then describes.
+ * If anything else changes (another tool, a form endpoint), these texts must change too.
  * Review by the business owner (and, ideally, legal counsel) before publishing.
  */
 export interface LegalSection {
@@ -26,14 +28,27 @@ export interface LegalDocument {
 }
 
 const updatedAt = { iso: '2026-10-07', label: '7 de outubro de 2026' };
+/** The Google Analytics text was written on this date; it is shown only while analytics is on. */
+const analyticsUpdatedAt = { iso: '2026-10-23', label: '23 de outubro de 2026' };
 /** The terms changed when the prices page was published (reference values). */
 const termsUpdatedAt = { iso: '2026-10-08', label: '8 de outubro de 2026' };
+
+const analyticsSection: LegalSection = {
+  id: 'medicao-de-audiencia',
+  title: 'Medição de audiência (Google Analytics)',
+  paragraphs: [
+    'Usamos o Google Analytics 4, do Google, para entender como o site é usado: quantas visitas ele recebe, quais páginas são vistas, de que tipo de aparelho e de que região aproximada vêm os acessos e quais botões e opções são usados, como WhatsApp, telefone, preços e produtos. Os relatórios são estatísticos e não mostram seu nome, seu telefone nem o que você escreve no formulário.',
+    'Para isso, o Google Analytics grava no seu navegador os cookies _ga e _ga_*, com um identificador aleatório guardado por até 2 anos após a última visita, e recebe dados técnicos do acesso, como páginas visitadas, navegador, aparelho e endereço IP. O Google usa o endereço IP para estimar a localização aproximada e não o armazena.',
+    'Esses dados são tratados pelo Google, inclusive em servidores fora do Brasil. Os recursos de publicidade do Google Analytics (Google Signals e personalização de anúncios) ficam desativados neste site. Saiba como o Google usa esses dados em policies.google.com/technologies/partner-sites.',
+    'Se preferir não ser medido, bloqueie ou apague os cookies nas configurações do navegador ou instale o complemento de desativação do Google Analytics (tools.google.com/dlpage/gaoptout).',
+  ],
+};
 
 export const privacyPolicy: LegalDocument = {
   eyebrow: 'Privacidade',
   title: 'Política de privacidade',
   lead: 'Como o site da MARK ASSISTÊNCIA lida com dados pessoais, em linguagem direta.',
-  updatedAt,
+  updatedAt: gaMeasurementId ? analyticsUpdatedAt : updatedAt,
   tocLabel: 'Nesta página',
   sections: [
     {
@@ -49,10 +64,13 @@ export const privacyPolicy: LegalDocument = {
       id: 'dados-coletados',
       title: 'Quais dados este site coleta',
       paragraphs: [
-        'Este site não usa cookies, não tem ferramentas de análise de audiência ou de publicidade e não armazena dados pessoais.',
+        gaMeasurementId
+          ? 'Este site não tem ferramentas de publicidade e não armazena dados pessoais em servidores próprios. A única ferramenta de terceiros é o Google Analytics, que mede a audiência como explicado a seguir.'
+          : 'Este site não usa cookies, não tem ferramentas de análise de audiência ou de publicidade e não armazena dados pessoais.',
         'O formulário da página de contato não envia dados para nenhum servidor. Ele apenas monta uma mensagem com o que você preencher e a abre no WhatsApp ou no seu aplicativo de e-mail, onde você revisa e decide se envia.',
       ],
     },
+    ...(gaMeasurementId ? [analyticsSection] : []),
     {
       id: 'dados-tecnicos',
       title: 'Dados técnicos de acesso',

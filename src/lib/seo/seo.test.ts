@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { pageSeo } from '@/config/seo';
+import { pageSeo, type PageSeo } from '@/config/seo';
 import { normalizeSiteUrl, officialSiteUrl } from '@/config/site';
 import { prerenderPaths } from '@/routes/routes';
-import { buildHeadTags, serializeHeadTags } from './head';
+import { absoluteUrl, buildHeadTags, serializeHeadTags } from './head';
+import { buildSitemap } from './sitemap';
 import { localBusinessJsonLd, pageJsonLd, serializeJsonLd } from './structured-data';
 
 const SITE = 'https://www.exemplo.com.br';
@@ -76,6 +77,30 @@ describe('head tags', () => {
     const html = serializeHeadTags(buildHeadTags({ path: '/x', title: 'A "B" <C>', description: 'D & E' }, ''));
     expect(html).toContain('<title>A &quot;B&quot; &lt;C&gt;</title>');
     expect(html).toContain('content="D &amp; E"');
+  });
+});
+
+describe('sitemap', () => {
+  const pages: readonly PageSeo[] = Object.values(pageSeo);
+
+  it('lists every prerendered page, in order, with date, change frequency and priority', () => {
+    const entries = buildSitemap(pages, SITE, '2026-10-23').split('<url>').slice(1);
+    expect(entries.map((entry) => /<loc>(.*)<\/loc>/.exec(entry)?.[1])).toEqual(
+      prerenderPaths.map((path) => absoluteUrl(SITE, path)),
+    );
+    for (const entry of entries) {
+      expect(entry).toMatch(
+        /<lastmod>2026-10-23<\/lastmod>\s*<changefreq>(weekly|monthly|yearly)<\/changefreq>\s*<priority>[01]\.\d<\/priority>/,
+      );
+    }
+  });
+
+  it('gives every indexable page a priority between 0 and 1, with the home page on top', () => {
+    for (const page of pages.filter((p) => !p.noindex)) {
+      expect(page.sitemap?.priority, page.path).toBeGreaterThan(0);
+      expect(page.sitemap?.priority, page.path).toBeLessThanOrEqual(1);
+    }
+    expect(pageSeo.home.sitemap.priority).toBe(1);
   });
 });
 

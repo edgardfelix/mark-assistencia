@@ -3,6 +3,10 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createBrowserRouter, matchRoutes } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { AppProviders } from '@/app/AppProviders';
+import { gaMeasurementId } from '@/config/analytics';
+import { pageSeo } from '@/config/seo';
+import { startGoogleAnalytics } from '@/lib/google-analytics';
+import { isRouteHandle } from '@/routes/handle';
 import { routes } from '@/routes/routes';
 
 /**
@@ -57,5 +61,16 @@ async function start() {
     createRoot(container).render(app);
   }
 }
+
+/** Title of the page a path renders, known before React renders it (for analytics). */
+function titleFor(pathname: string): string {
+  const handle: unknown = [...(matchRoutes(routes, pathname) ?? [])]
+    .reverse()
+    .find((match) => isRouteHandle(match.route.handle))?.route.handle;
+  return isRouteHandle(handle) ? handle.seo.title : pageSeo.notFound.title;
+}
+
+// Measurement is opt-in through VITE_GA_ID (see config/analytics.ts).
+if (gaMeasurementId) startGoogleAnalytics(gaMeasurementId, titleFor);
 
 void start();

@@ -44,7 +44,9 @@ const template = readFileSync(join(CLIENT, 'index.html'), 'utf8');
 if (!template.includes('<!--app-html-->'))
   fail('dist/client/index.html was already prerendered — run build:client again.');
 const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
-const { render, prerenderPaths, siteUrl } = await import(pathToFileURL(SERVER_ENTRY).href);
+const { render, renderSitemap, prerenderPaths, siteUrl, gaMeasurementId } = await import(
+  pathToFileURL(SERVER_ENTRY).href
+);
 
 /** Collects a chunk and its static imports (transitively) for modulepreload. */
 function chunkFiles(key, seen = new Set()) {
@@ -96,13 +98,8 @@ written.push('404.html');
 
 // Search engine files. Absolute URLs are required, so they need the public origin.
 if (siteUrl) {
-  const urls = prerenderPaths
-    .map((path) => `  <url><loc>${siteUrl}${path === '/' ? '/' : path}</loc></url>`)
-    .join('\n');
-  writeFileSync(
-    join(CLIENT, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
-  );
+  // <lastmod> is the build day (UTC), with each page's <changefreq> and <priority> from src/config/seo.ts.
+  writeFileSync(join(CLIENT, 'sitemap.xml'), renderSitemap(new Date().toISOString().slice(0, 10)));
   writeFileSync(join(CLIENT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
 } else {
   writeFileSync(join(CLIENT, 'robots.txt'), 'User-agent: *\nAllow: /\n');
@@ -124,3 +121,9 @@ for (const file of written) {
 rmSync(join(CLIENT, '.vite'), { recursive: true, force: true });
 
 console.log(`[prerender] ${written.length} pages written${siteUrl ? ` for ${siteUrl}` : ''}: ${written.join(', ')}`);
+
+// Analytics state, so the deploy log shows whether this build measures visits.
+if (gaMeasurementId) console.log(`[prerender] Google Analytics on: ${gaMeasurementId}`);
+else if (process.env.VITE_GA_ID)
+  console.warn('[prerender] VITE_GA_ID is not a GA4 measurement ID (G-XXXXXXXXXX): Google Analytics is off.');
+else console.log('[prerender] Google Analytics off (VITE_GA_ID not set).');

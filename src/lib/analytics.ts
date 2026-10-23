@@ -1,8 +1,8 @@
 /**
- * Analytics seam. Nothing is tracked today: no analytics or ad pixels are
- * installed. Conversion events are already emitted at the right places, so a
- * future provider (e.g. an ads conversion tag, added together with a consent
- * banner and an updated privacy policy) only needs `registerAnalyticsSink`.
+ * Analytics seam. Conversion events are emitted at the right places and reach
+ * Google Analytics 4 when VITE_GA_ID is set (lib/google-analytics.ts); without
+ * it nothing is tracked. Another provider only needs `registerAnalyticsSink`,
+ * plus an updated privacy policy (and, for an ads conversion tag, a consent banner).
  */
 export type AnalyticsEvent =
   | { name: 'whatsapp_click'; placement: string }

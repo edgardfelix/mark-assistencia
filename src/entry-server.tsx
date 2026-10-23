@@ -2,17 +2,24 @@ import { renderToString } from 'react-dom/server';
 import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router';
 import { ServerStyleSheet } from 'styled-components';
 import { AppProviders } from '@/app/AppProviders';
+import { gaMeasurementId } from '@/config/analytics';
 import { type LcpImage } from '@/config/lcp';
 import { pageSeo } from '@/config/seo';
 import { siteUrl } from '@/config/site';
 import { getImage } from '@/lib/media';
 import { buildHeadTags, serializeHeadTags } from '@/lib/seo/head';
+import { buildSitemap } from '@/lib/seo/sitemap';
 import { pageJsonLd, serializeJsonLd } from '@/lib/seo/structured-data';
 import { isRouteHandle } from '@/routes/handle';
 import { prerenderPaths, routes } from '@/routes/routes';
 import { manropeLatin } from '@/styles/GlobalStyle';
 
-export { prerenderPaths, siteUrl };
+export { gaMeasurementId, prerenderPaths, siteUrl };
+
+/** sitemap.xml for every indexable page, dated with the build day (see scripts/prerender.mjs). */
+export function renderSitemap(lastModified: string): string {
+  return buildSitemap(Object.values(pageSeo), siteUrl, lastModified);
+}
 
 export interface RenderResult {
   html: string;
